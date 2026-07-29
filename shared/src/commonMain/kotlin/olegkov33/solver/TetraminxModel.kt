@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.width
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 
@@ -25,18 +25,23 @@ import androidx.compose.ui.unit.dp
 
 
 class TetraminxModel {
-
     /**
      * Method creates a flat 1D tetra-minx, all sides 1 - 4 are laid out sequentially
      */
     @Composable
-    fun createTetraminx(btn: MutableState<Color>) {
+    fun createTetraminx(
+        buttonColor: MutableState<Color>,
+        innerArray: Array<Array<Color>>,
+        arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
+    ) {
 
         Row(modifier = Modifier.width(400.dp).height(400.dp)) {
             for( i in 0 .. 3){
                 Box(modifier = Modifier.weight(1f)){
 
-                    createFace(i, btn)
+                    createFace(i, buttonColor,
+                        innerArray[i], arrayOfTetraminxColours[i]
+                    )
                 }
             }
         }
@@ -48,9 +53,10 @@ class TetraminxModel {
      * @return returns a canvas
      */
     @Composable
-    fun createFace(faceNum: Int, inputColor: MutableState<Color>) {
+    fun createFace(faceNum: Int, inputColor: MutableState<Color>,
+                   ints: Array<Color>, get: SnapshotStateList<Color>) {
+
         val pathList = remember { mutableListOf<Path>() }
-        val cellColor = remember {mutableStateListOf( *Array(6) {Color.LightGray})}
 
         return Canvas(modifier = Modifier
             .fillMaxSize()
@@ -60,7 +66,8 @@ class TetraminxModel {
 
                         // Path tester asks - is the click position (pos) inside any path (path)?
                         if(PathHitTester(path).contains(pos)){
-                            cellColor[index] = inputColor.value
+                            get[index] = inputColor.value
+                            ints[index] = inputColor.value
                         }
                     }
                 }
@@ -77,14 +84,8 @@ class TetraminxModel {
             pathList.add(createSixthEdge(size))
 
             for( i in pathList.indices){
-                if(i % 2 == 0){
-                    drawPath(pathList[i], cellColor[i])
-                }
-                else{
-                    drawPath(pathList[i], cellColor[i])
-                }
+                drawPath(pathList[i], get[i])
             }
-
         }
     }
 

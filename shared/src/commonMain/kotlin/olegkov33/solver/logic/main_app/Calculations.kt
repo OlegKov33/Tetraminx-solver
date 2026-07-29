@@ -21,6 +21,7 @@ class Calculations(
     private val exploredStates: MutableSet<String> = HashSet<String>()
     private val pathNodes: MutableMap<String, Node> = HashMap<String, Node>()
     private var notFoundGoal = true
+    private var statusString : String = ""
 
     init {
         startingNode = inputStartingNode
@@ -34,17 +35,20 @@ class Calculations(
 
         if (startingNode.printNode().equals(finishingNode.printNode())) {
             println("The input is equal to the goal!")
+            statusString = "The input is equal to the goal"
             return null
         }
 
         // checks if the input is valid by counting numbers
         if (!this.isSolvable) {
             println("not solvable")
+            statusString = "Not solvable"
             return null
         }
 
         while (notFoundGoal) {
             if (unexploredNodes.isEmpty()) {
+                statusString = "No unexplored nodes were found"
                 return null
             }
             // adds a node to a list if visited nodes, used to determine if the node was explored already
@@ -71,18 +75,22 @@ class Calculations(
             if (exploredStates.size > 23000) {
                 notFoundGoal = false
                 println("The goal was not found, please check your inputs again.")
+                statusString = "The goal was not found in a given time, please make a few turns and try again"
                 return null
             }
         }
 
-        println("outside loop?!")
+        statusString = "This message should be unreachable, how did you get here?"
         return null
     }
 
+    fun getStatusMessage() : String{
+        return statusString
+    }
 
     // generates all possible turns from a given node
-    fun exploringNode(givenNode: Node): Queue<Node> {
-        val returnList: Queue<Node> = PriorityQueue<Node>()
+    private fun exploringNode(givenNode: Node): Queue<Node> {
+        val returnList: Queue<Node> = PriorityQueue()
         val stateRotator = Rotator()
         val listOfNewStates: MutableList<Array<IntArray>> = stateRotator.rotateAll(givenNode)
 
@@ -148,7 +156,7 @@ class Calculations(
 
 
     //goes from back to fount:  goal >> node before goal ... initial node
-    fun constructPath(finalNode: Node): MutableList<Node> {
+    private fun constructPath(finalNode: Node): MutableList<Node> {
         val nodesPathArray: MutableList<Node> = ArrayList<Node>()
         nodesPathArray.add(finalNode)
         var tempParentNode: String = finalNode.getParent()
