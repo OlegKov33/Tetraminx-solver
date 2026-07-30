@@ -1,4 +1,4 @@
-package olegkov33.solver
+package olegkov33.solver.model_and_buttons
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

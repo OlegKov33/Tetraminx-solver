@@ -5,13 +5,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import olegkov33.solver.logic.main_app.Calculations
 import olegkov33.solver.logic.main_app.Node
+import olegkov33.solver.model_and_buttons.ControllingModelWithButtons
 
 
-class LogicAndButton {
+class ImplementationOfButtonsAndModel {
     // I can now do this:
     // add color to tetra minx
     // change colors
@@ -23,9 +25,12 @@ class LogicAndButton {
     // animations... I'll probably do them with AI
 
 
-
     @Composable
-    fun addingModelAndButtons(){
+    fun addingModelAndButtons(
+        currentScreen: MutableState<WindowState>,
+        statusMessage: MutableState<String>,
+        nodeStates: MutableList<Node>
+    ) {
         val innerArray = remember{
             arrayOf(
                 arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
@@ -37,41 +42,45 @@ class LogicAndButton {
 
 
         val model = ControllingModelWithButtons()
-        //model.generateButtonsAndTetraminx(innerArray)
 
         Row{
             Button(
                 onClick = {
+                    //currentScreen.value = WindowState.Solving
                     for (item in innerArray){
                         println(item.contentToString())
-//                        for(element in item){
-//                            print("${element.colorSpace.name} ")
-//                        }
-//                        println("\n")
                     }
                 },
                 shape = CircleShape
             ){
                 Text("show innerArray")
             }
-            buttonToStartTraining(innerArray)
+
+            //buttonToStartTraining(innerArray)
             model.generateButtonsAndTetraminx(innerArray)
+
+            Button(onClick = {
+                training(innerArray, statusMessage, nodeStates)
+                currentScreen.value = WindowState.Solving
+            }){
+                Text(text = "Start Training", color = Color.White)
+            }
         }
 
     }
 
-    @Composable
-    fun buttonToStartTraining(innerArray: Array<Array<Color>>) {
-        Button(onClick = {
-            training(innerArray)
-        }){
-            Text(text = "Start Training", color = Color.White)
-        }
+//    @Composable
+//    fun buttonToStartTraining(innerArray: Array<Array<Color>>) {
+//
+//
+//
+//    }
 
-
-    }
-
-    private fun training(innerArray: Array<Array<Color>>) {
+    private fun training(
+        innerArray: Array<Array<Color>>,
+        statusMessage: MutableState<String>,
+        nodeStates: MutableList<Node>
+    ) {
         // transform array into ints :)
         val workingArray = Array(4){
             IntArray(6)
@@ -103,8 +112,12 @@ class LogicAndButton {
         val goalNode = Node()
         val calculations = Calculations(startingNode, goalNode)
 
-        calculations.start()
+        calculations.setStatusMessage(statusMessage)
+        val result = calculations.start()
+        if( result != null){
 
+            nodeStates.addAll( result)
+        }
     }
 
 }

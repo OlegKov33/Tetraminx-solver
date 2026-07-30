@@ -1,4 +1,4 @@
-package olegkov33.solver
+package olegkov33.solver.model_and_buttons
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -18,9 +18,9 @@ class ControllingModelWithButtons {
      */
     @Composable
     fun generateButtonsAndTetraminx(innerArray: Array<Array<Color>>) {
-        val currentButtonColorSelected : MutableState<Color> = remember { mutableStateOf( Color.LightGray) }
+        val currentButtonColorSelected : MutableState<Color> = remember { mutableStateOf(Color.LightGray) }
         val arrayOfTetraminxColours : Array<SnapshotStateList<Color>> =
-            Array(4){ mutableStateListOf(* Array(6){Color.Black}) }
+            Array(4){ mutableStateListOf(*Array(6) { Color.Black }) }
 
         val buttons = ColorButtons(currentButtonColorSelected)
         val model = TetraminxModel()
@@ -30,7 +30,8 @@ class ControllingModelWithButtons {
             model.createTetraminx(
                 currentButtonColorSelected,
                 innerArray,
-                arrayOfTetraminxColours)
+                arrayOfTetraminxColours
+            )
         }
 
 

@@ -1,6 +1,7 @@
 package olegkov33.solver.logic.main_app
 
 
+import androidx.compose.runtime.MutableState
 import olegkov33.solver.logic.utils.Rotator
 import java.util.*
 
@@ -19,9 +20,9 @@ class Calculations(
     private val finishingNode: Node
     private val unexploredNodes: Queue<Node> = PriorityQueue()
     private val exploredStates: MutableSet<String> = HashSet<String>()
-    private val pathNodes: MutableMap<String, Node> = HashMap<String, Node>()
+    private var pathNodes: MutableMap<String, Node> = HashMap<String, Node>()
     private var notFoundGoal = true
-    private var statusString : String = ""
+    private lateinit var statusString : MutableState<String>
 
     init {
         startingNode = inputStartingNode
@@ -35,57 +36,63 @@ class Calculations(
 
         if (startingNode.printNode().equals(finishingNode.printNode())) {
             println("The input is equal to the goal!")
-            statusString = "The input is equal to the goal"
+            statusString.value = "The input is equal to the goal"
             return null
         }
 
         // checks if the input is valid by counting numbers
         if (!this.isSolvable) {
             println("not solvable")
-            statusString = "Not solvable"
+            statusString.value = "Not solvable"
             return null
         }
 
         while (notFoundGoal) {
             if (unexploredNodes.isEmpty()) {
-                statusString = "No unexplored nodes were found"
+                statusString.value = "No unexplored nodes were found"
                 return null
             }
+
+            // node we are about to explore
+            val node = unexploredNodes.poll()
+
             // adds a node to a list if visited nodes, used to determine if the node was explored already
-            exploredStates.add(unexploredNodes.peek().printNode())
+            exploredStates.add(node.printNode())
 
             // adds a node to a hash list, but unlike the list above, will be used for path construction later
-            pathNodes.put(unexploredNodes.peek().getName(), unexploredNodes.peek())
+            pathNodes[node.getName()] = node
 
-            // removes and explores the most promising node according to compareTo method in main_app.Node.java class
-            unexploredNodes.addAll(exploringNode(unexploredNodes.poll()))
-
-
-            // If the node equals to the goal, tell the user 
-            if (unexploredNodes.peek().printNode().equals(finishingNode.printNode())) {
+            if(node.printNode().equals(finishingNode.printNode())) {
                 println(
                     ("Goal found!\nCost of node : " + unexploredNodes.peek().getCost()
                             + "\nTotal nodes explored: " + exploredStates.size + "\nGenerated nodes: " + unexploredNodes.size + "\n")
                 )
-                pathNodes.put(unexploredNodes.peek().getName(), unexploredNodes.peek())
 
-                return constructPath(unexploredNodes.peek())
+                statusString.value = "Goal found"
+//                return constructPath(unexploredNodes.peek())
+                return constructPath(node)
             }
+
+
+            // removes and explores the most promising node according to compareTo method in main_app.Node.java class
+            unexploredNodes.addAll(exploringNode(node))
+
+
             //if you didn't find the goal within 23,000 nodes, there is a problem.
             if (exploredStates.size > 23000) {
                 notFoundGoal = false
                 println("The goal was not found, please check your inputs again.")
-                statusString = "The goal was not found in a given time, please make a few turns and try again"
+                statusString.value = "The goal was not found in a given time, please make a few turns and try again"
                 return null
             }
         }
 
-        statusString = "This message should be unreachable, how did you get here?"
+        statusString.value = "This message should be unreachable, how did you get here?"
         return null
     }
 
-    fun getStatusMessage() : String{
-        return statusString
+    fun setStatusMessage(inputMessage: MutableState<String>) {
+        statusString = inputMessage
     }
 
     // generates all possible turns from a given node
@@ -98,7 +105,7 @@ class Calculations(
             if (!exploredStates.contains(stateToName(state))) {
                 returnList.add(
                     Node(
-                        state, givenNode.getCost() + 1, state,
+                        state, givenNode.getCost() + 1, givenNode.getGoalState(),
                         stateToName(state), givenNode.getName()
                     )
                 )
