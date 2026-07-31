@@ -6,16 +6,20 @@ class Rotator {
 
     fun rotateAll(inputNode: Node): MutableList<Array<IntArray>> {
 
-        val resultList: MutableList<Array<IntArray>> = ArrayList(8)
-        resultList.add(rotateFrontTopToRight(inputNode.getNodeState()))
-        resultList.add(rotateFrontTopToLeft(inputNode.getNodeState()))
-        resultList.add(rotateFrontRightSideTowards(inputNode.getNodeState()))
-        resultList.add(rotateFrontRightSideAway(inputNode.getNodeState()))
+        return rotateAll(inputNode.getNodeState())
+    }
 
-        resultList.add(rotateFrontLeftSideTowards(inputNode.getNodeState()))
-        resultList.add(rotateFrontLeftSideAway(inputNode.getNodeState()))
-        resultList.add(rotateBackSideToRight(inputNode.getNodeState()))
-        resultList.add(rotateBackSideToLeft(inputNode.getNodeState()))
+    fun rotateAll(inputNode : Array<IntArray>): MutableList<Array<IntArray>> {
+        val resultList: MutableList<Array<IntArray>> = ArrayList(8)
+        resultList.add(rotateFrontTopToRight(inputNode))
+        resultList.add(rotateFrontTopToLeft(inputNode))
+        resultList.add(rotateFrontRightSideTowards(inputNode))
+        resultList.add(rotateFrontRightSideAway(inputNode))
+
+        resultList.add(rotateFrontLeftSideTowards(inputNode))
+        resultList.add(rotateFrontLeftSideAway(inputNode))
+        resultList.add(rotateBackSideToRight(inputNode))
+        resultList.add(rotateBackSideToLeft(inputNode))
 
         return resultList
     }

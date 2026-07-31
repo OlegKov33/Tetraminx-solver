@@ -2,7 +2,7 @@ package olegkov33.solver.logic.main_app
 
 class Node : Comparable<Node> {
     private var nodeState: Array<IntArray>
-    private val goalState: Array<IntArray>
+    private var goalState: Array<IntArray>
     private var cost: Int = 0
     private var name: String = "none"
     private var parent: String = "none"
@@ -36,6 +36,9 @@ class Node : Comparable<Node> {
         this.parent = inputParent
     }
 
+    fun setGoalState(startingNodeState: Array<IntArray>) {
+        goalState = startingNodeState
+    }
     
     // checks the equality of nodes
     override fun equals(other: Any?): Boolean {

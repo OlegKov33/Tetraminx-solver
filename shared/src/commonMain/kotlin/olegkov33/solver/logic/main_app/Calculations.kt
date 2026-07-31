@@ -34,6 +34,11 @@ class Calculations(
     fun start(): MutableList<Node>? {
         // checks if the input is equal to the goal
 
+        if(!configuringGoalState()){
+            statusString.value = "Something went wrong"
+            return null
+        }
+
         if (startingNode.printNode().equals(finishingNode.printNode())) {
             println("The input is equal to the goal!")
             statusString.value = "The input is equal to the goal"
@@ -93,6 +98,121 @@ class Calculations(
 
     fun setStatusMessage(inputMessage: MutableState<String>) {
         statusString = inputMessage
+    }
+
+    private fun configuringGoalState() : Boolean{
+        println("inside configurer")
+        var startingNodeState = startingNode.getNodeState()
+        val totalBaseCounter = MutableList(4){0}
+        val listOfUnexploredStates = HashSet<Array<IntArray>>()
+        val listOfExploredStates = HashSet<Array<IntArray>>()
+
+        for(side in startingNodeState){
+            for(i in 0 .. 2){
+                totalBaseCounter[side[i*2+1]] ++
+            }
+        }
+
+        for( item in totalBaseCounter.indices){
+            if(totalBaseCounter[item] != 3){
+                return false
+            }
+        }
+
+        val rotate = Rotator()
+        var currentBaseScore = countingBases(startingNodeState)
+        var foundAllBases = false
+
+        if(currentBaseScore == 12){
+            foundAllBases = true
+        }
+        val newStates = rotate.rotateAll(startingNodeState)
+        val promisingStates = mutableListOf<Array<IntArray>>()
+
+        println("how many current bases are there? ${currentBaseScore}")
+        while(!foundAllBases){
+            for(item in newStates){
+                val itemBaseCount = countingBases(item)
+                println("state - ${itemBaseCount}")
+                if(itemBaseCount == 12){
+                    println("I SHOULD BE HERE")
+                    startingNodeState = item
+                    foundAllBases = true
+                    break
+
+                }
+                if(currentBaseScore <= itemBaseCount && !listOfExploredStates.contains(item)){
+                    promisingStates.addAll(rotate.rotateAll(item))
+                    listOfExploredStates.add(item)
+                }
+            }
+            if(!promisingStates.isEmpty()){
+                currentBaseScore = countingBases( promisingStates.first() )
+            }else{
+                break
+            }
+
+            if(currentBaseScore == 12){
+                startingNodeState = promisingStates.first()
+                foundAllBases = true
+                break
+            }
+
+            newStates.clear()
+            newStates.addAll(promisingStates)
+            promisingStates.clear()
+
+        }
+
+        if(!foundAllBases){
+            return false
+        }
+
+        for(side in startingNodeState.indices){
+            //println("success")
+            //println("show me side ${startingNodeState[side].contentToString()}")
+            for(i in 0 ..2){
+                startingNodeState[side][i*2] = startingNodeState[side][i*2+1]
+            }
+        }
+
+        println("the output ")
+        for(side in startingNodeState.indices){
+            println("show me side ${startingNodeState[side].contentToString()}")
+
+        }
+
+        finishingNode.setState(startingNodeState)
+        return true
+    }
+
+    private fun countingBases(inputState : Array<IntArray>) : Int{
+
+        var totalBases = 0
+
+        for(side in inputState){
+            var pairs = 0
+
+            for(i in 0 .. 2){
+                if(side[i*2+1] == side[(i*2+3)%6]){
+                    pairs++
+                }
+            }
+
+            when (pairs) {
+                1 -> {
+                    totalBases += 2
+                }
+                3 -> {
+                    totalBases += 3
+                }
+                else -> {
+                    totalBases++
+                }
+            }
+        }
+
+        return totalBases
     }
 
     // generates all possible turns from a given node
