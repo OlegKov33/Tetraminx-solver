@@ -15,7 +15,10 @@ class Scrambler {
         innerNode = inputNode
     }
 
-    // scrambles by turnsNumber times
+    /**
+     * Method used to scramble the given node. Has a chance to scramble the solution
+     * @param turnsNumber how many turns to scramble for
+     */
     fun scramble(turnsNumber: Int): Array<IntArray> {
         val turnRotator = Rotator()
         val stateList: MutableList<Array<IntArray>> = ArrayList(turnsNumber + 1)

@@ -26,6 +26,7 @@ class ColorButtons(inputColor: MutableState<Color>){
     /**
      * Function used to create a row with predetermined buttons.
      * Buttons are used to control Tetra-minx color per cell
+     * @param arrayOfTetraminxColours parameter that is used to change color of Tetra-minx model
      */
     @Composable
     fun ColourButtons(arrayOfTetraminxColours: Array<SnapshotStateList<Color>>) {

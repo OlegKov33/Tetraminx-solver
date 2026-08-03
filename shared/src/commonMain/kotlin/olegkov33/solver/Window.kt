@@ -6,9 +6,11 @@ import androidx.compose.runtime.remember
 import olegkov33.solver.logic.main_app.Node
 
 
-//This class us responsible for changing windows (solving and showing solution
 class Window {
-    // it needs to know the state AND output message
+
+    /**
+     * Method used to combine the buttons + tetra-minx with solution window
+     */
     @Composable
     fun windowLogic(){
         val currentScreen = remember{ mutableStateOf(WindowState.Setup)}

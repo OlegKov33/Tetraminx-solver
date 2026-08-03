@@ -15,6 +15,7 @@ class ControllingModelWithButtons {
     /**
      * Method is used to generate buttons and 1D tetra-minx model. Buttons can be pressed
      * and them upon pressing a cell, it will change color to that which you picked
+     * @param innerArray parameter used to color in the Tetra-minx model via buttons
      */
     @Composable
     fun generateButtonsAndTetraminx(innerArray: Array<Array<Color>>) {

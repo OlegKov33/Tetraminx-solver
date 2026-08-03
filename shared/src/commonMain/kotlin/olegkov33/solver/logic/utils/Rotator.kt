@@ -4,11 +4,21 @@ import olegkov33.solver.logic.main_app.Node
 
 class Rotator {
 
+    /**
+     * Method rotateAll used to expand a given node into all possible moves
+     * @param inputNode node that will be explored
+     * @return returns an array of states that the given node could become
+     */
     fun rotateAll(inputNode: Node): MutableList<Array<IntArray>> {
 
         return rotateAll(inputNode.getNodeState())
     }
 
+    /**
+     * Method rotateAll used to expand a given node into all possible moves
+     * @param inputNode state that will be explored
+     * @return returns an array of states that the given state could become
+     */
     fun rotateAll(inputNode : Array<IntArray>): MutableList<Array<IntArray>> {
         val resultList: MutableList<Array<IntArray>> = ArrayList(8)
         resultList.add(rotateFrontTopToRight(inputNode))

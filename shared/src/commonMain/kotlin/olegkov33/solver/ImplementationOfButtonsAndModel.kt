@@ -14,17 +14,14 @@ import olegkov33.solver.model_and_buttons.ControllingModelWithButtons
 
 
 class ImplementationOfButtonsAndModel {
-    // I can now do this:
-    // add color to tetra minx
-    // change colors
-    // mock test
-    // TIME FOR REAL TESTING;
-    // ITS WORKING!!! LET'S GOOO!!!
-    // now, let's add proper message output
-    // how to solve it (steps)
-    // animations... I'll probably do them with AI
 
-
+    /**
+     * This is the implementation that creates buttons and tetra-minx model that is modified via
+     * buttons
+     * @param currentScreen parameter used to change to solution screen
+     * @param statusMessage parameter used as placeholder, which is shown in solution screen
+     * @param nodeStates parameter used when mapping solution in solution screen
+     */
     @Composable
     fun addingModelAndButtons(
         currentScreen: MutableState<WindowState>,
@@ -56,7 +53,6 @@ class ImplementationOfButtonsAndModel {
                 Text("show innerArray")
             }
 
-            //buttonToStartTraining(innerArray)
             model.generateButtonsAndTetraminx(innerArray)
 
             Button(onClick = {
@@ -68,13 +64,6 @@ class ImplementationOfButtonsAndModel {
         }
 
     }
-
-//    @Composable
-//    fun buttonToStartTraining(innerArray: Array<Array<Color>>) {
-//
-//
-//
-//    }
 
     private fun training(
         innerArray: Array<Array<Color>>,
@@ -108,9 +97,9 @@ class ImplementationOfButtonsAndModel {
         }
 
         val startingNode = Node()
+        startingNode.setName("start")
         startingNode.setState(workingArray)
-        val goalNode = Node()
-        val calculations = Calculations(startingNode, goalNode)
+        val calculations = Calculations(startingNode)
 
         calculations.setStatusMessage(statusMessage)
         val result = calculations.start()

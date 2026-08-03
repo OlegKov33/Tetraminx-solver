@@ -11,8 +11,6 @@ fun main(): Unit = application {
         title = "Tetraminx-solver",
     ) {
 
-        //ImplementationOfButtonsAndModel().logicMeetsButton()
-        //ImplementationOfButtonsAndModel().addingModelAndButtons()
         Window().windowLogic()
     }
 }

@@ -10,10 +10,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import olegkov33.solver.logic.main_app.Node
+import olegkov33.solver.logic.utils.Rotator
 
 class SolutionScreen {
-    // TODO ! DONT FORGET TO CLEAR THE SELECTION OF EVERTHING MUTABLE!!!
 
+    /**
+     * Method used to create a button to change to tetra-minx config and will display solution steps
+     * @param currentScreen used to change to tetra-minx config screen
+     * @param statusMessage used to indicate if goal was found or something went wrong
+     * @param nodeStates used to construct the path from initial to goal state
+     */
     @Composable
     fun btnWithChange(
         currentScreen: MutableState<WindowState>,
@@ -38,7 +44,9 @@ class SolutionScreen {
         Column {
             displayHeaderText(statusMessage.value)
 
-            if(nodeStates.size >1){
+            println("UI received path of size ${nodeStates.size}")
+            nodeStates.forEachIndexed { i, n -> println("  $i: ${n.printNode()}") }
+            if(nodeStates.size >= 1){
                Row(){
                    displayStepsAndButtons(nodeStates)
 
@@ -55,99 +63,80 @@ class SolutionScreen {
 
     @Composable
     private fun displayStepsAndButtons(nodeStates: MutableList<Node>) {
-        var stepCounter = remember {mutableStateOf(0)}
-        var currentInstruction = remember {mutableStateOf(nodeStates.size - 1)}
-        val nextButtonEnabled = remember { mutableStateOf(true) }
-        val previousButtonEnabled = remember { mutableStateOf(false) }
-        val displayedStep = remember {mutableStateOf("")}
 
-        Button(
-            onClick = {
-                if(nodeStates.size-1 > stepCounter.value) {
-                    stepCounter.value ++
-                    previousButtonEnabled.value = true
-                }else{
-                    nextButtonEnabled.value = false
-                }
+        val stepCounter = remember {mutableStateOf(0)}
+        val maxStepCount = nodeStates.size-1
+        var step = stepCounter.value
 
-                displayedStep.value = instructionsText(
-                    nodeStates[stepCounter.value-1].getNodeState(),
-                    nodeStates[stepCounter.value].getNodeState())
-                currentInstruction.value --
-          },
-            shape = CircleShape
-        ) {
-            Text("Previous Step")
+        val canGoNext = stepCounter.value < maxStepCount
+        val canGoPrev = stepCounter.value > 0
+
+        val instruction = when{
+            step == 0 -> "Start position"
+            else -> instructionsText(
+                nodeStates[step-1].getNodeState(),
+                nodeStates[step].getNodeState()
+            )
         }
 
+        Column{
+            Text("Step ${stepCounter.value}/${maxStepCount}")
+            Text(instruction)
 
-        Button(
-            onClick = {
-                if(0 < stepCounter.value) {
-                    stepCounter.value --
-                    nextButtonEnabled.value = true
-                }else{
-                    previousButtonEnabled.value = false
-                }
-                displayedStep.value = instructionsText(
-                    nodeStates[stepCounter.value+1].getNodeState(),
-                    nodeStates[stepCounter.value].getNodeState())
+        Row {
+            Button(
+                onClick = {
+                    if (canGoPrev) {
+                        stepCounter.value--
+                    }
+                },
+                enabled = canGoPrev,
+                shape = CircleShape
+            ) {
+                Text(text = "Previous Step")
+            }
 
-                currentInstruction.value ++
-              },
-            shape = CircleShape
-        ) {
-            Text("Next Step")
+            Button(
+                onClick = {
+                    if (canGoNext) {
+                        stepCounter.value++
+                    }
+                },
+                enabled = canGoNext,
+                shape = CircleShape
+            ) {
+                Text(text = "Next Step")
+            }
         }
 
-        Text(text = displayedStep.value)
+        }
 
 
     }
 
-    private fun instructionsText(parentNode: Array<IntArray>, currentNode: Array<IntArray>) : String{
+    private fun instructionsText(parent: Array<IntArray>, child: Array<IntArray>) : String{
 
-        if (currentNode[0][1] == parentNode[1][1]) {
-            println("Next move is turning top side right >>>")
-            return "Next move is turning top side right >>>"
-        }
-        if (currentNode[0][1] == parentNode[2][1]) {
-            println("Next move is turning top side left <<<")
-            return "Next move is turning top side left <<<"
-        }
+        val rotator = Rotator()
 
-
-        if (currentNode[0][3] == parentNode[1][5]) {
-            println("Next move is turning right side away from you >>>")
-            return "Next move is turning right side away from you >>>"
-        }
-        if (currentNode[0][3] == parentNode[3][1]) {
-            println("Next move is turning right side towards you <<<")
-            return "Next move is turning right side towards you <<<"
-        }
-
-
-        if (currentNode[0][5] == parentNode[2][3]) {
-            println("Next move is turning left side away from you <<<")
-            return "Next move is turning left side away from you <<<"
-        }
-        if (currentNode[0][5] == parentNode[3][5]) {
-            println("Next move is turning left side towards you >>>")
-            return "Next move is turning left side towards you >>>"
-        }
-
-
-        if (currentNode[1][3] == parentNode[2][5]) {
-            println("Next move is turning back side left <<<")
-            return "Next move is turning back side left <<<"
-        }
-        if (currentNode[1][3] == parentNode[3][3]) {
-            println("Next move is turning back side right >>>")
-            return "Next move is turning back side right >>>"
-        }
-
+        if (rotator.rotateFrontTopToRight(parent).contentDeepEquals(child))
+            return "turning top side right >>>"
+        if (rotator.rotateFrontTopToLeft(parent).contentDeepEquals(child))
+            return "turning top side left <<<"
+        if (rotator.rotateFrontRightSideTowards(parent).contentDeepEquals(child))
+            return "turning right side towards you <<<"
+        if (rotator.rotateFrontRightSideAway(parent).contentDeepEquals(child))
+            return "turning right side away from you >>>"
+        if (rotator.rotateFrontLeftSideTowards(parent).contentDeepEquals(child))
+            return "turning left side towards you >>>"
+        if (rotator.rotateFrontLeftSideAway(parent).contentDeepEquals(child))
+            return "turning left side away from you <<<"
+        if (rotator.rotateBackSideToRight(parent).contentDeepEquals(child))
+            return "turning back side right >>>"
+        if (rotator.rotateBackSideToLeft(parent).contentDeepEquals(child))
+            return "turning back side left <<<"
 
         return "WARNING, IMPOSSIBLE ANSWER!"
     }
+
 
 }

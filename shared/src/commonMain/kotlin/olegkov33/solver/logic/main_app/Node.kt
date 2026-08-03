@@ -39,9 +39,17 @@ class Node : Comparable<Node> {
     fun setGoalState(startingNodeState: Array<IntArray>) {
         goalState = startingNodeState
     }
-    
-    // checks the equality of nodes
+
+    fun setName(name: String) {
+        this.name = name
+    }
+
+    /**
+     * Method checks the equality of 2 nodes
+     * @param other given value, must be node
+     */
     override fun equals(other: Any?): Boolean {
+
         if (other != null) {
             if (other.javaClass != Node::class.java) {
                 return false
@@ -62,12 +70,26 @@ class Node : Comparable<Node> {
         nodeState = inputState
     }
 
-    // used in similar way as toString. However, it's used for naming nodes and in path finding
+    /**
+     * Method used to turn node state into name
+     * @return returns a string of node state. e.g. default state [000000, 111..., 22..., 3...]
+     * will be turned into 000000111111222222333333
+     */
     fun printNode(): String {
         val output = StringBuilder()
         for (i in 0..3) {
             for (j in 0..5) {
-                output.append(this.nodeState[i][j])
+                output.append(nodeState[i][j])
+            }
+        }
+        return output.toString()
+    }
+
+    fun printGoalState(): String {
+        val output = StringBuilder()
+        for (i in 0..3) {
+            for (j in 0..5) {
+                output.append(goalState[i][j])
             }
         }
         return output.toString()
@@ -98,48 +120,9 @@ class Node : Comparable<Node> {
         return parent
     }
 
-    // MY COMPARE-TO version. Does not guarantee an optimal solution.
-    override fun compareTo(inputNode: Node): Int {
-        var correctlyAlignedCells = 0
-        var inputCorrectlyAlignedCells = 0
 
-        // checks current nodes number of displaced sides.
-        for (i in 0..2) {
-            if (this.nodeState[i][0] == goalState[i][0]) {
-                correctlyAlignedCells-- //test
-                if (this.nodeState[(i - 2) * -1][2] == goalState[(i - 2) * -1][2]) {
-                    correctlyAlignedCells += 2
-                }
-            }
-            if (this.nodeState[3][i * 2] == goalState[3][i * 2]) {
-                correctlyAlignedCells-- // test
-                if (this.nodeState[i][5] == goalState[i][5]) {
-                    correctlyAlignedCells += 2
-                }
-            }
-        }
-
-
-        // checks the inputNodes number of displaced sides.
-        for (i in 0..2) {
-            if (inputNode.nodeState[i][0] == inputNode.goalState[i][0]) {
-                inputCorrectlyAlignedCells-- // test
-                if (inputNode.nodeState[(i - 2) * -1][2] == inputNode.goalState[(i - 2) * -1][2]) {
-                    inputCorrectlyAlignedCells += 2
-                }
-            }
-            if (inputNode.nodeState[3][i * 2] == inputNode.goalState[3][i * 2]) {
-                inputCorrectlyAlignedCells-- //test
-                if (this.nodeState[i][5] == goalState[i][5]) {
-                    inputCorrectlyAlignedCells += 2
-                }
-            }
-        }
-
-        // the more the cost, the less appealing the node should appear
-        correctlyAlignedCells -= (cost) //test
-        inputCorrectlyAlignedCells -= (inputNode.cost) //test
-        return Integer.compare(inputCorrectlyAlignedCells, correctlyAlignedCells)
+    override fun compareTo(other: Node): Int {
+        return this.cost.compareTo(other.cost)
     }
 
     override fun toString(): String {
