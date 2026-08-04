@@ -17,11 +17,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "olegkov33.tetraminx_solver.MainKt"
+        mainClass = "olegkov33.tetramix_solver.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "olegkov33.tetraminx_solver"
+            packageName = "olegkov33.tetramix_solver"
             packageVersion = "1.0.0"
         }
     }

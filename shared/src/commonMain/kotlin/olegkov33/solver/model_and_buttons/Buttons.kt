@@ -30,7 +30,7 @@ class ColorButtons(inputColor: MutableState<Color>){
      */
     @Composable
     fun ColourButtons(arrayOfTetraminxColours: Array<SnapshotStateList<Color>>) {
-        return Row{
+        return Row(Modifier.fillMaxWidth().padding(16.dp)) {
             createDoubleColourButton(
                 Color.Red, Color.LightGray,
                 80.dp, arrayOfTetraminxColours)

@@ -1,12 +1,18 @@
 package olegkov33.solver
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import olegkov33.solver.logic.main_app.Calculations
 import olegkov33.solver.logic.main_app.Node
@@ -28,6 +34,8 @@ class ImplementationOfButtonsAndModel {
         statusMessage: MutableState<String>,
         nodeStates: MutableList<Node>
     ) {
+
+        val model = ControllingModelWithButtons()
         val innerArray = remember{
             arrayOf(
                 arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
@@ -37,24 +45,7 @@ class ImplementationOfButtonsAndModel {
             )
         }
 
-
-        val model = ControllingModelWithButtons()
-
         Row{
-            Button(
-                onClick = {
-                    //currentScreen.value = WindowState.Solving
-                    for (item in innerArray){
-                        println(item.contentToString())
-                    }
-                },
-                shape = CircleShape
-            ){
-                Text("show innerArray")
-            }
-
-            model.generateButtonsAndTetraminx(innerArray)
-
             Button(onClick = {
                 training(innerArray, statusMessage, nodeStates)
                 currentScreen.value = WindowState.Solving
@@ -62,6 +53,9 @@ class ImplementationOfButtonsAndModel {
                 Text(text = "Start Training", color = Color.White)
             }
         }
+
+
+        model.generateButtonsAndTetraminx(innerArray)
 
     }
 
