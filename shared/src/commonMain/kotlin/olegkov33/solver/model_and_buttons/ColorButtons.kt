@@ -29,7 +29,7 @@ class ColorButtons(inputColor: MutableState<Color>){
      * @param arrayOfTetraminxColours parameter that is used to change color of Tetra-minx model
      */
     @Composable
-    fun ColourButtons(arrayOfTetraminxColours: Array<SnapshotStateList<Color>>) {
+    fun GenerateColourButtons(arrayOfTetraminxColours: Array<SnapshotStateList<Color>>) {
         return Row(Modifier.fillMaxWidth().padding(16.dp)) {
             createDoubleColourButton(
                 Color.Red, Color.LightGray,
@@ -68,7 +68,7 @@ class ColorButtons(inputColor: MutableState<Color>){
                     .fillMaxWidth()
                     .clickable{
                         currentButtonColorSelected.value = topColor
-                        updatingColorSelectionOnArray(topColor, arrayOfTetraminxColours)
+                        updatingColorSelectionOfArray(topColor, arrayOfTetraminxColours)
                     }
             )
             Box(
@@ -81,13 +81,13 @@ class ColorButtons(inputColor: MutableState<Color>){
                     .fillMaxWidth()
                     .clickable{
                         currentButtonColorSelected.value = bottomColor
-                        updatingColorSelectionOnArray(bottomColor, arrayOfTetraminxColours)
+                        updatingColorSelectionOfArray(bottomColor, arrayOfTetraminxColours)
                     }
             )
         }
     }
 
-    private fun updatingColorSelectionOnArray(
+    private fun updatingColorSelectionOfArray(
         selectedColor: Color,
         arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
     ){

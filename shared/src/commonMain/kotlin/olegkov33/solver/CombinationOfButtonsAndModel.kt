@@ -1,25 +1,18 @@
 package olegkov33.solver
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import olegkov33.solver.logic.main_app.Calculations
 import olegkov33.solver.logic.main_app.Node
 import olegkov33.solver.model_and_buttons.ControllingModelWithButtons
 
 
-class ImplementationOfButtonsAndModel {
+class CombinationOfButtonsAndModel {
 
     /**
      * This is the implementation that creates buttons and tetra-minx model that is modified via
@@ -29,25 +22,20 @@ class ImplementationOfButtonsAndModel {
      * @param nodeStates parameter used when mapping solution in solution screen
      */
     @Composable
-    fun addingModelAndButtons(
+    fun AddingModelAndButtons(
         currentScreen: MutableState<WindowState>,
         statusMessage: MutableState<String>,
-        nodeStates: MutableList<Node>
+        nodeStates: MutableList<Node>,
+        innerArray: Array<Array<Color>>,
+        arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
     ) {
 
         val model = ControllingModelWithButtons()
-        val innerArray = remember{
-            arrayOf(
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified)
-            )
-        }
+
 
         Row{
             Button(onClick = {
-                training(innerArray, statusMessage, nodeStates)
+                beginSolving(innerArray, statusMessage, nodeStates)
                 currentScreen.value = WindowState.Solving
             }){
                 Text(text = "Start Training", color = Color.White)
@@ -55,16 +43,17 @@ class ImplementationOfButtonsAndModel {
         }
 
 
-        model.generateButtonsAndTetraminx(innerArray)
+        model.generateButtonsAndTetraminx(innerArray, arrayOfTetraminxColours)
 
     }
 
-    private fun training(
+    private fun beginSolving(
         innerArray: Array<Array<Color>>,
         statusMessage: MutableState<String>,
         nodeStates: MutableList<Node>
     ) {
-        // transform array into ints :)
+
+        val startingNode = Node()
         val workingArray = Array(4){
             IntArray(6)
             IntArray(6)
@@ -90,13 +79,13 @@ class ImplementationOfButtonsAndModel {
             }
         }
 
-        val startingNode = Node()
         startingNode.setName("start")
         startingNode.setState(workingArray)
-        val calculations = Calculations(startingNode)
 
+        val calculations = Calculations(startingNode)
         calculations.setStatusMessage(statusMessage)
         val result = calculations.start()
+
         if( result != null){
 
             nodeStates.addAll( result)

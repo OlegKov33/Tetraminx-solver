@@ -21,7 +21,7 @@ class SolutionScreen {
      * @param nodeStates used to construct the path from initial to goal state
      */
     @Composable
-    fun btnWithChange(
+    fun ButtonsMenu(
         currentScreen: MutableState<WindowState>,
         statusMessage: MutableState<String>,
         nodeStates: MutableList<Node>
@@ -34,20 +34,15 @@ class SolutionScreen {
                       },
             shape = CircleShape
         ){
-            Text(text = "Hello?")
+            Text(text = "Back")
         }
 
-        // here you will check this and IF it is not null, do something...
-        // otherwise... just display a message and return to other screen
-
-        println("${statusMessage}, and $nodeStates")
         Column {
             displayHeaderText(statusMessage.value)
 
-            println("UI received path of size ${nodeStates.size}")
             nodeStates.forEachIndexed { i, n -> println("  $i: ${n.printNode()}") }
-            if(nodeStates.size >= 1){
-               Row(){
+            if(nodeStates.size > 1){
+               Row{
                    displayStepsAndButtons(nodeStates)
 
                }
@@ -66,7 +61,7 @@ class SolutionScreen {
 
         val stepCounter = remember {mutableStateOf(0)}
         val maxStepCount = nodeStates.size-1
-        var step = stepCounter.value
+        val step = stepCounter.value
 
         val canGoNext = stepCounter.value < maxStepCount
         val canGoPrev = stepCounter.value > 0

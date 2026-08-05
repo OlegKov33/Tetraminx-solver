@@ -2,30 +2,18 @@ package olegkov33.solver.model_and_buttons
 
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 
@@ -41,9 +29,12 @@ class TetraminxModel {
 
     /**
      * Method creates a flat 1D tetra-minx, all sides 1 - 4 are laid out sequentially
+     * @param buttonColor color of the latest pressed button that will change generated face
+     * @param innerArray invisible version of arrayOfTetraminxColours, not visible, logic that used for solving
+     * @param arrayOfTetraminxColours visible version of innerArray, used to show user what they selected
      */
     @Composable
-    fun createTetraminx(
+    fun CreateAllSidedTetraminx(
         buttonColor: MutableState<Color>,
         innerArray: Array<Array<Color>>,
         arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
@@ -61,7 +52,7 @@ class TetraminxModel {
                         .padding(4.dp)
                         .weight(1f)
                 ){
-                    createFace(i, buttonColor,
+                    createTetraminxFace(i, buttonColor,
                         innerArray[i], arrayOfTetraminxColours[i]
                     )
                 }
@@ -75,7 +66,7 @@ class TetraminxModel {
      * @return returns a canvas
      */
     @Composable
-    fun createFace(faceNum: Int, inputColor: MutableState<Color>,
+    fun createTetraminxFace(faceNum: Int, inputColor: MutableState<Color>,
                    ints: Array<Color>, get: SnapshotStateList<Color>) {
 
         val pathList = remember { mutableListOf<Path>() }
