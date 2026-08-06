@@ -48,7 +48,7 @@ class Calculations(
         pathNodes.clear()
         pathNodes[startingNode.getName()] = startingNode
 
-        while(open.isNotEmpty()){
+        while(open.isNotEmpty() && visited.size < 70000){
             val node = open.removeFirst()
 
             if(node.printNode() == startingNode.printGoalState()) {
@@ -56,6 +56,7 @@ class Calculations(
                     ("Goal found!\nCost of node : " + node.getCost()
                             + "\nPath nodes explored: " + pathNodes.size + "\nOpen Queue: " + open.size + "\n")
                 )
+                statusString.value = "Goal found"
                 return constructPath(node)
             }
 
@@ -79,6 +80,7 @@ class Calculations(
         }
 
         println("NOTHING FOUND?!")
+        statusString.value = "Goal was not found, please make a few turns and try again"
         return null
     }
 
