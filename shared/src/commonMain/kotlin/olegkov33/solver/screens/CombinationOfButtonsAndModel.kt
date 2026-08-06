@@ -1,4 +1,4 @@
-package olegkov33.solver
+package olegkov33.solver.screens
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
@@ -9,6 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import olegkov33.solver.logic.main_app.Calculations
 import olegkov33.solver.logic.main_app.Node
+import olegkov33.solver.logic.utils.Scrambler
 import olegkov33.solver.model_and_buttons.ControllingModelWithButtons
 
 
@@ -35,10 +36,21 @@ class CombinationOfButtonsAndModel {
 
         Row{
             Button(onClick = {
-                beginSolving(innerArray, statusMessage, nodeStates)
+                configureBeforeSolving(innerArray, statusMessage, nodeStates)
+                currentScreen.value = WindowState.Setup
+            }){
+                Text(text = "Solve", color = Color.White)
+            }
+            Button(onClick = {
+                beginScrambling(statusMessage, nodeStates)
                 currentScreen.value = WindowState.Solving
             }){
-                Text(text = "Start Training", color = Color.White)
+                Text(text = "Scramble", color = Color.White)
+            }
+            Button(onClick = {
+                currentScreen.value = WindowState.Info
+            }){
+                Text(text = "?", color = Color.White)
             }
         }
 
@@ -47,13 +59,12 @@ class CombinationOfButtonsAndModel {
 
     }
 
-    private fun beginSolving(
+    private fun configureBeforeSolving(
         innerArray: Array<Array<Color>>,
         statusMessage: MutableState<String>,
         nodeStates: MutableList<Node>
     ) {
 
-        val startingNode = Node()
         val workingArray = Array(4){
             IntArray(6)
             IntArray(6)
@@ -79,6 +90,22 @@ class CombinationOfButtonsAndModel {
             }
         }
 
+        beginSolving(
+            workingArray,
+            statusMessage,
+            nodeStates)
+
+
+
+
+    }
+
+    private fun beginSolving(
+        workingArray: Array<IntArray>,
+        statusMessage: MutableState<String>,
+        nodeStates: MutableList<Node>) {
+
+        val startingNode = Node()
         startingNode.setName("start")
         startingNode.setState(workingArray)
 
@@ -91,5 +118,26 @@ class CombinationOfButtonsAndModel {
             nodeStates.addAll( result)
         }
     }
+    private fun beginScrambling(
+        statusMessage: MutableState<String>,
+        nodeStates: MutableList<Node>
+    ){
 
+        val scrambler = Scrambler()
+        val startingNode = Node()
+        startingNode.setName("start")
+
+        startingNode.setGoalState(scrambler.scramble( ( 3 .. 10).random()) )
+
+        val calculations = Calculations(startingNode)
+        calculations.setStatusMessage(statusMessage)
+        val result = calculations.scramblerStart()
+
+        if(result != null){
+
+            nodeStates.addAll(result)
+            statusMessage.value = "Follow the instructions to reach our scrambled state"
+        }
+
+    }
 }

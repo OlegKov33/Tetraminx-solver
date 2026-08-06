@@ -3,7 +3,7 @@ package olegkov33.solver.logic.main_app
 
 import androidx.compose.runtime.MutableState
 import olegkov33.solver.logic.utils.Rotator
-import java.util.*
+import kotlin.collections.*
 
 class Calculations(
     inputStartingNode: Node
@@ -40,7 +40,7 @@ class Calculations(
             return null
         }
 
-        val open: Queue<Node> = ArrayDeque()
+        val open = ArrayDeque<Node>()
         val visited: HashSet<String> = HashSet()
 
         open.add(startingNode)
@@ -49,7 +49,64 @@ class Calculations(
         pathNodes[startingNode.getName()] = startingNode
 
         while(open.isNotEmpty()){
-            val node = open.poll()
+            val node = open.removeFirst()
+
+            if(node.printNode() == startingNode.printGoalState()) {
+                println(
+                    ("Goal found!\nCost of node : " + node.getCost()
+                            + "\nPath nodes explored: " + pathNodes.size + "\nOpen Queue: " + open.size + "\n")
+                )
+                return constructPath(node)
+            }
+
+            val rotator = Rotator()
+            val children = rotator.rotateAll(node)
+
+            for( newState in children){
+                val name = stateToName(newState)
+                if(name in visited){
+                    continue
+                }
+
+                visited.add(name)
+                val child = Node(newState, node.getCost()+1,
+                    node.getGoalState(), name,
+                    node.getName())
+
+                open.add(child)
+                pathNodes[name] = child
+            }
+        }
+
+        println("NOTHING FOUND?!")
+        return null
+    }
+
+    fun scramblerStart() : MutableList<Node>?{
+
+        if (startingNode.printNode() == startingNode.printGoalState()) {
+            println("The input is equal to the goal!")
+            statusString.value = "The input is equal to the goal"
+            return null
+        }
+
+        // checks if the input is valid by counting numbers
+        if (!this.isSolvable) {
+            println("not solvable")
+            statusString.value = "Not solvable"
+            return null
+        }
+
+        val open = ArrayDeque<Node>()
+        val visited: HashSet<String> = HashSet()
+
+        open.add(startingNode)
+        visited.add(startingNode.printNode())
+        pathNodes.clear()
+        pathNodes[startingNode.getName()] = startingNode
+
+        while(open.isNotEmpty()){
+            val node = open.removeFirst()
 
             if(node.printNode() == startingNode.printGoalState()) {
                 println(

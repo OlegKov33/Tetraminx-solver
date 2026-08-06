@@ -1,4 +1,4 @@
-package olegkov33.solver
+package olegkov33.solver.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -16,7 +16,7 @@ class Window {
      */
     @Composable
     fun windowLogic(){
-        val currentScreen = remember{ mutableStateOf(WindowState.Setup)}
+        val currentScreen = remember{ mutableStateOf(WindowState.Info)}
         val statusMessage = remember{ mutableStateOf("")}
         val finalNodes : MutableList<Node> = remember { mutableListOf() }
         val arrayOfTetraminxColours : Array<SnapshotStateList<Color>> =
@@ -36,13 +36,16 @@ class Window {
                 .AddingModelAndButtons(currentScreen, statusMessage,
                     finalNodes, innerArray,
                     arrayOfTetraminxColours)
-        }else{
+        }else if(currentScreen.value == WindowState.Solving){
             SolutionScreen().ButtonsMenu(currentScreen, statusMessage, finalNodes)
+        }else{
+            Guide().createGuideWindow(currentScreen)
         }
     }
 
 }
 enum class WindowState {
     Setup,
-    Solving
+    Solving,
+    Info
 }
