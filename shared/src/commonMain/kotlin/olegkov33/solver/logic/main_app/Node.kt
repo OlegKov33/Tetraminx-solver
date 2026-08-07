@@ -51,7 +51,7 @@ class Node : Comparable<Node> {
     override fun equals(other: Any?): Boolean {
 
         if (other != null) {
-            if (other.javaClass != Node::class.java) {
+            if (other !is Node) {
                 return false
             }
         }
@@ -66,7 +66,7 @@ class Node : Comparable<Node> {
         return true
     }
 
-    fun setState(inputState : Array<IntArray>){
+    fun setState(inputState: Array<IntArray>) {
         nodeState = inputState
     }
 
@@ -100,23 +100,23 @@ class Node : Comparable<Node> {
         return this.nodeState[inputSide]
     }
 
-    fun getNodeState() : Array<IntArray> {
+    fun getNodeState(): Array<IntArray> {
         return nodeState
     }
 
-    fun getCost() : Int{
+    fun getCost(): Int {
         return cost
     }
 
-    fun getGoalState() : Array<IntArray>{
+    fun getGoalState(): Array<IntArray> {
         return goalState
     }
 
-    fun getName() : String{
+    fun getName(): String {
         return name
     }
 
-    fun getParent() : String{
+    fun getParent(): String {
         return parent
     }
 

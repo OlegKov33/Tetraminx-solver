@@ -8,34 +8,29 @@ import kotlin.collections.*
 class Calculations(
     inputStartingNode: Node
 ) {
-    private val startingNode: Node
-    private var pathNodes: MutableMap<String, Node> = HashMap<String, Node>()
-    private lateinit var statusString : MutableState<String>
+    private val startingNode: Node = inputStartingNode
+    private var pathNodes: MutableMap<String, Node> = HashMap()
+    private lateinit var statusString: MutableState<String>
 
-    init {
-        startingNode = inputStartingNode
-    }
 
     /**
      * Method used to determine how to get from initial state to goal state.
      *
      * @return returns null or array of nodes if it was successful in finding goal
      */
-    fun start(): MutableList<Node>?{
-        if(!configuringGoalState()){
+    fun start(): MutableList<Node>? {
+        if (!configuringGoalState()) {
             statusString.value = "Something went wrong"
             return null
         }
 
         if (startingNode.printNode() == startingNode.printGoalState()) {
-            println("The input is equal to the goal!")
             statusString.value = "The input is equal to the goal"
             return null
         }
 
         // checks if the input is valid by counting numbers
         if (!this.isSolvable) {
-            println("not solvable")
             statusString.value = "Not solvable"
             return null
         }
@@ -48,14 +43,10 @@ class Calculations(
         pathNodes.clear()
         pathNodes[startingNode.getName()] = startingNode
 
-        while(open.isNotEmpty() && visited.size < 70000){
+        while (open.isNotEmpty() && visited.size < 70000) {
             val node = open.removeFirst()
 
-            if(node.printNode() == startingNode.printGoalState()) {
-                println(
-                    ("Goal found!\nCost of node : " + node.getCost()
-                            + "\nPath nodes explored: " + pathNodes.size + "\nOpen Queue: " + open.size + "\n")
-                )
+            if (node.printNode() == startingNode.printGoalState()) {
                 statusString.value = "Goal found"
                 return constructPath(node)
             }
@@ -63,38 +54,37 @@ class Calculations(
             val rotator = Rotator()
             val children = rotator.rotateAll(node)
 
-            for( newState in children){
+            for (newState in children) {
                 val name = stateToName(newState)
-                if(name in visited){
+                if (name in visited) {
                     continue
                 }
 
                 visited.add(name)
-                val child = Node(newState, node.getCost()+1,
+                val child = Node(
+                    newState, node.getCost() + 1,
                     node.getGoalState(), name,
-                    node.getName())
+                    node.getName()
+                )
 
                 open.add(child)
                 pathNodes[name] = child
             }
         }
 
-        println("NOTHING FOUND?!")
         statusString.value = "Goal was not found, please make a few turns and try again"
         return null
     }
 
-    fun scramblerStart() : MutableList<Node>?{
+    fun scramblerStart(): MutableList<Node>? {
 
         if (startingNode.printNode() == startingNode.printGoalState()) {
-            println("The input is equal to the goal!")
             statusString.value = "The input is equal to the goal"
             return null
         }
 
         // checks if the input is valid by counting numbers
         if (!this.isSolvable) {
-            println("not solvable")
             statusString.value = "Not solvable"
             return null
         }
@@ -107,37 +97,34 @@ class Calculations(
         pathNodes.clear()
         pathNodes[startingNode.getName()] = startingNode
 
-        while(open.isNotEmpty()){
+        while (open.isNotEmpty()) {
             val node = open.removeFirst()
 
-            if(node.printNode() == startingNode.printGoalState()) {
-                println(
-                    ("Goal found!\nCost of node : " + node.getCost()
-                            + "\nPath nodes explored: " + pathNodes.size + "\nOpen Queue: " + open.size + "\n")
-                )
+            if (node.printNode() == startingNode.printGoalState()) {
                 return constructPath(node)
             }
 
             val rotator = Rotator()
             val children = rotator.rotateAll(node)
 
-            for( newState in children){
+            for (newState in children) {
                 val name = stateToName(newState)
-                if(name in visited){
+                if (name in visited) {
                     continue
                 }
 
                 visited.add(name)
-                val child = Node(newState, node.getCost()+1,
+                val child = Node(
+                    newState, node.getCost() + 1,
                     node.getGoalState(), name,
-                    node.getName())
+                    node.getName()
+                )
 
                 open.add(child)
                 pathNodes[name] = child
             }
         }
 
-        println("NOTHING FOUND?!")
         return null
     }
 
@@ -150,57 +137,56 @@ class Calculations(
         statusString = inputMessage
     }
 
-    private fun configuringGoalState() : Boolean{
+    private fun configuringGoalState(): Boolean {
 
-        var startingNodeState = startingNode.getNodeState().map {it.clone()}.toTypedArray()
-        val totalBaseCounter = MutableList(4){0}
+        var startingNodeState = startingNode.getNodeState().map { it.clone() }.toTypedArray()
+        val totalBaseCounter = MutableList(4) { 0 }
         val listOfExploredStates = HashSet<Array<IntArray>>()
 
         val rotate = Rotator()
         var currentBaseScore = countingBases(startingNodeState)
         var foundAllBases = false
 
-        for(side in startingNodeState){
-            for(i in 0 .. 2){
-                totalBaseCounter[side[i*2+1]] ++
+        for (side in startingNodeState) {
+            for (i in 0..2) {
+                totalBaseCounter[side[i * 2 + 1]]++
             }
         }
 
-        for( item in totalBaseCounter.indices){
-            if(totalBaseCounter[item] != 3){
+        for (item in totalBaseCounter.indices) {
+            if (totalBaseCounter[item] != 3) {
                 return false
             }
         }
 
 
-        if(currentBaseScore == 12){
+        if (currentBaseScore == 12) {
             foundAllBases = true
         }
         val newStates = rotate.rotateAll(startingNodeState)
         val promisingStates = mutableListOf<Array<IntArray>>()
 
-        println("how many current bases are there? ${currentBaseScore}")
-        while(!foundAllBases){
-            for(item in newStates){
+        while (!foundAllBases) {
+            for (item in newStates) {
                 val itemBaseCount = countingBases(item)
-                if(itemBaseCount == 12){
+                if (itemBaseCount == 12) {
                     startingNodeState = item
                     foundAllBases = true
                     break
 
                 }
-                if(currentBaseScore <= itemBaseCount && !listOfExploredStates.contains(item)){
+                if (currentBaseScore <= itemBaseCount && !listOfExploredStates.contains(item)) {
                     promisingStates.addAll(rotate.rotateAll(item))
                     listOfExploredStates.add(item)
                 }
             }
-            if(!promisingStates.isEmpty()){
-                currentBaseScore = countingBases( promisingStates.first() )
-            }else{
+            if (!promisingStates.isEmpty()) {
+                currentBaseScore = countingBases(promisingStates.first())
+            } else {
                 break
             }
 
-            if(currentBaseScore == 12){
+            if (currentBaseScore == 12) {
                 startingNodeState = promisingStates.first()
                 foundAllBases = true
                 break
@@ -212,38 +198,29 @@ class Calculations(
 
         }
 
-        if(!foundAllBases){
+        if (!foundAllBases) {
             return false
         }
 
-        for(side in startingNodeState.indices){
-            //println("success")
-            //println("show me side ${startingNodeState[side].contentToString()}")
-            for(i in 0 ..2){
-                startingNodeState[side][i*2] = startingNodeState[side][i*2+1]
+        for (side in startingNodeState.indices) {
+            for (i in 0..2) {
+                startingNodeState[side][i * 2] = startingNodeState[side][i * 2 + 1]
             }
         }
 
-        println("the output ")
-        for(side in startingNodeState.indices){
-            println("show me side ${startingNodeState[side].contentToString()}")
-
-        }
-
-        //finishingNode.setState(startingNodeState)
         startingNode.setGoalState(startingNodeState)
         return true
     }
 
-    private fun countingBases(inputState : Array<IntArray>) : Int{
+    private fun countingBases(inputState: Array<IntArray>): Int {
 
         var totalBases = 0
 
-        for(side in inputState){
+        for (side in inputState) {
             var pairs = 0
 
-            for(i in 0 .. 2){
-                if(side[i*2+1] == side[(i*2+3)%6]){
+            for (i in 0..2) {
+                if (side[i * 2 + 1] == side[(i * 2 + 3) % 6]) {
                     pairs++
                 }
             }
@@ -252,9 +229,11 @@ class Calculations(
                 1 -> {
                     totalBases += 2
                 }
+
                 3 -> {
                     totalBases += 3
                 }
+
                 else -> {
                     totalBases++
                 }
@@ -315,7 +294,7 @@ class Calculations(
 
     //goes from back to fount:  goal >> node before goal ... initial node
     private fun constructPath(finalNode: Node): MutableList<Node> {
-        val nodesPathArray: MutableList<Node> = ArrayList<Node>()
+        val nodesPathArray: MutableList<Node> = ArrayList()
         var currentNode: Node? = finalNode
 
         while (currentNode != null) {
@@ -323,7 +302,7 @@ class Calculations(
             val parentName = currentNode.getParent()
             currentNode = pathNodes[parentName]
 
-            if(parentName == "none"){
+            if (parentName == "none") {
                 break
             }
         }

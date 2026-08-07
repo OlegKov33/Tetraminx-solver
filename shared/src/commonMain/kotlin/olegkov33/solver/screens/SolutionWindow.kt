@@ -31,85 +31,84 @@ class SolutionScreen {
                 statusMessage.value = ""
                 nodeStates.clear()
                 currentScreen.value = WindowState.Setup
-                      },
-            shape = CircleShape
-        ){
+            },
+            shape = CircleShape) {
             Text(text = "Back")
         }
 
         Column {
-            displayHeaderText(statusMessage.value)
+            DisplayHeaderText(statusMessage.value)
 
             nodeStates.forEachIndexed { i, n -> println("  $i: ${n.printNode()}") }
-            if(nodeStates.size > 1){
-               Row{
-                   displayStepsAndButtons(nodeStates)
+            if (nodeStates.size > 1) {
+                Row {
+                    DisplayStepsAndButtons(nodeStates)
 
-               }
+                }
             }
         }
     }
 
     @Composable
-    private fun displayHeaderText(text : String){
+    private fun DisplayHeaderText(text: String) {
 
         Text(text = text)
     }
 
     @Composable
-    private fun displayStepsAndButtons(nodeStates: MutableList<Node>) {
+    private fun DisplayStepsAndButtons(nodeStates: MutableList<Node>) {
 
-        val stepCounter = remember {mutableStateOf(0)}
-        val maxStepCount = nodeStates.size-1
+        val stepCounter = remember { mutableStateOf(0) }
+        val maxStepCount = nodeStates.size - 1
         val step = stepCounter.value
 
         val canGoNext = stepCounter.value < maxStepCount
         val canGoPrev = stepCounter.value > 0
 
-        val instruction = when{
+        val instruction = when {
             step == 0 -> "Start position"
             else -> instructionsText(
-                nodeStates[step-1].getNodeState(),
+                nodeStates[step - 1].getNodeState(),
                 nodeStates[step].getNodeState()
             )
         }
 
-        Column{
+        Column {
             Text("Step ${stepCounter.value}/${maxStepCount}")
             Text(instruction)
 
-        Row {
-            Button(
-                onClick = {
-                    if (canGoPrev) {
-                        stepCounter.value--
-                    }
-                },
-                enabled = canGoPrev,
-                shape = CircleShape
-            ) {
-                Text(text = "Previous Step")
-            }
+            Row {
+                Button(
+                    onClick = {
+                        if (canGoPrev) {
+                            stepCounter.value--
+                        }
+                    },
+                    enabled = canGoPrev,
+                    shape = CircleShape
+                ) {
+                    Text(text = "Previous Step")
+                }
 
-            Button(
-                onClick = {
-                    if (canGoNext) {
-                        stepCounter.value++
-                    }
-                },
-                enabled = canGoNext,
-                shape = CircleShape
-            ) {
-                Text(text = "Next Step")
+                Button(
+                    onClick = {
+                        if (canGoNext) {
+                            stepCounter.value++
+                        }
+                    },
+                    enabled = canGoNext,
+                    shape = CircleShape
+                ) {
+                    Text(text = "Next Step")
+                }
             }
-        }
 
         }
 
 
     }
 
-    private fun instructionsText(parent: Array<IntArray>, child: Array<IntArray>) : String{
+    private fun instructionsText(parent: Array<IntArray>, child: Array<IntArray>): String {
 
         val rotator = Rotator()
 

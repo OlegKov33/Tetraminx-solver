@@ -41,18 +41,20 @@ class TetraminxModel {
     ) {
 
 
-        Column (Modifier
-            .fillMaxWidth(0.6f)
-            .fillMaxHeight(0.8f)
-            ) {
-            for( i in 0 .. 3){
+        Column(
+            Modifier
+                .fillMaxWidth(0.6f)
+                .fillMaxHeight(0.8f)
+        ) {
+            for (i in 0..3) {
 
                 Box(
                     Modifier
                         .padding(4.dp)
                         .weight(1f)
-                ){
-                    createTetraminxFace(i, buttonColor,
+                ) {
+                    CreateTetraminxFace(
+                        i, buttonColor,
                         innerArray[i], arrayOfTetraminxColours[i]
                     )
                 }
@@ -66,54 +68,57 @@ class TetraminxModel {
      * @return returns a canvas
      */
     @Composable
-    fun createTetraminxFace(faceNum: Int, inputColor: MutableState<Color>,
-                   ints: Array<Color>, get: SnapshotStateList<Color>) {
+    fun CreateTetraminxFace(
+        faceNum: Int, inputColor: MutableState<Color>,
+        ints: Array<Color>, get: SnapshotStateList<Color>
+    ) {
 
         val pathList = remember { mutableListOf<Path>() }
 
-        return Canvas(modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures{pos ->
-                    pathList.forEachIndexed { index, path->
+        return Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures { pos ->
+                        pathList.forEachIndexed { index, path ->
 
-                        // Path tester asks - is the click position (pos) inside any path (path)?
-                        if(PathHitTester(path).contains(pos)){
-                            get[index] = inputColor.value
-                            ints[index] = inputColor.value
+                            // Path tester asks - is the click position (pos) inside any path (path)?
+                            if (PathHitTester(path).contains(pos)) {
+                                get[index] = inputColor.value
+                                ints[index] = inputColor.value
+                            }
                         }
                     }
                 }
-            }
         ) {
 
             pathList.clear()
 
-            pathList.add( createFirstEdge(size))
+            pathList.add(createFirstEdge(size))
             pathList.add(createSecondEdge(size))
             pathList.add(createThirdEdge(size))
             pathList.add(createFourthEdge(size))
             pathList.add(createFifthEdge(size))
             pathList.add(createSixthEdge(size))
 
-            for( i in pathList.indices){
+            for (i in pathList.indices) {
                 drawPath(pathList[i], get[i])
             }
         }
     }
 
 
-    private fun createFirstEdge(size: Size) : Path{
+    private fun createFirstEdge(size: Size): Path {
 
-        return  Path().apply {
-                moveTo(size.width / 2f, size.height / 2f)
-                lineTo(size.width / 4f, 0f)
-                lineTo(0f, size.height / 2f)
-                close()
-            }
+        return Path().apply {
+            moveTo(size.width / 2f, size.height / 2f)
+            lineTo(size.width / 4f, 0f)
+            lineTo(0f, size.height / 2f)
+            close()
+        }
     }
 
-    private fun createSecondEdge(size : Size) : Path {
+    private fun createSecondEdge(size: Size): Path {
 
         return Path().apply {
             moveTo(size.width / 2f, size.height / 2f)
@@ -124,7 +129,7 @@ class TetraminxModel {
 
     }
 
-    private fun createThirdEdge(size : Size) : Path{
+    private fun createThirdEdge(size: Size): Path {
 
         return Path().apply {
             moveTo(size.width / 2f, size.height / 2f)
@@ -134,7 +139,7 @@ class TetraminxModel {
         }
     }
 
-    private fun createFourthEdge(size: Size) : Path {
+    private fun createFourthEdge(size: Size): Path {
         return Path().apply {
             moveTo(size.width / 2f, size.height / 2f)
             lineTo(size.width / (4f / 3f), size.height)
@@ -143,7 +148,7 @@ class TetraminxModel {
         }
     }
 
-    private fun createFifthEdge(size: Size) : Path {
+    private fun createFifthEdge(size: Size): Path {
         return Path().apply {
             moveTo(size.width / 2f, size.height / 2f)
             lineTo(size.width / 4f, size.height)
@@ -152,7 +157,7 @@ class TetraminxModel {
         }
     }
 
-    private fun createSixthEdge(size: Size) : Path {
+    private fun createSixthEdge(size: Size): Path {
 
         return Path().apply {
             moveTo(size.width / 2f, size.height / 2f)

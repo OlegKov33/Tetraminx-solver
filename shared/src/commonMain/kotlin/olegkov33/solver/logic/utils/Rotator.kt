@@ -19,7 +19,7 @@ class Rotator {
      * @param inputNode state that will be explored
      * @return returns an array of states that the given state could become
      */
-    fun rotateAll(inputNode : Array<IntArray>): MutableList<Array<IntArray>> {
+    fun rotateAll(inputNode: Array<IntArray>): MutableList<Array<IntArray>> {
         val resultList: MutableList<Array<IntArray>> = ArrayList(8)
         resultList.add(rotateFrontTopToRight(inputNode))
         resultList.add(rotateFrontTopToLeft(inputNode))

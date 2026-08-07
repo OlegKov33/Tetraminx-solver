@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-class ColorButtons(inputColor: MutableState<Color>){
+class ColorButtons(inputColor: MutableState<Color>) {
     private var colourPairs = mutableMapOf<Color, Color>()
-    private var currentButtonColorSelected : MutableState<Color> = inputColor
+    private var currentButtonColorSelected: MutableState<Color> = inputColor
 
     /**
      * Function used to create a row with predetermined buttons.
@@ -31,34 +31,43 @@ class ColorButtons(inputColor: MutableState<Color>){
     @Composable
     fun GenerateColourButtons(arrayOfTetraminxColours: Array<SnapshotStateList<Color>>) {
         return Row(Modifier.fillMaxWidth().padding(16.dp)) {
-            createDoubleColourButton(
+            CreateDoubleColourButton(
                 Color.Red, Color.LightGray,
-                80.dp, arrayOfTetraminxColours)
-            createDoubleColourButton(Color.Green, Color.Magenta,
-                80.dp, arrayOfTetraminxColours)
-            createDoubleColourButton(Color.Blue, Color.Cyan,
-                80.dp, arrayOfTetraminxColours)
-            createDoubleColourButton(Color.Yellow, Color.DarkGray,
-                80.dp, arrayOfTetraminxColours)
+                80.dp, arrayOfTetraminxColours
+            )
+            CreateDoubleColourButton(
+                Color.Green, Color.Magenta,
+                80.dp, arrayOfTetraminxColours
+            )
+            CreateDoubleColourButton(
+                Color.Blue, Color.Cyan,
+                80.dp, arrayOfTetraminxColours
+            )
+            CreateDoubleColourButton(
+                Color.Yellow, Color.DarkGray,
+                80.dp, arrayOfTetraminxColours
+            )
         }
     }
 
 
     @Composable
-    private fun createDoubleColourButton(
+    private fun CreateDoubleColourButton(
         topColor: Color,
         bottomColor: Color,
         buttonSize: Dp,
         arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
-    ){
+    ) {
 
         colourPairs[bottomColor] = topColor
         colourPairs[topColor] = bottomColor
 
-        return Column(modifier = Modifier
-            .size(buttonSize)
-            .padding(10.dp)
-            .clip(RoundedCornerShape(70))) {
+        return Column(
+            modifier = Modifier
+                .size(buttonSize)
+                .padding(10.dp)
+                .clip(RoundedCornerShape(70))
+        ) {
             Box(
                 modifier = Modifier.background(
                     color = topColor,
@@ -66,7 +75,7 @@ class ColorButtons(inputColor: MutableState<Color>){
                     .weight(1f)
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
                         currentButtonColorSelected.value = topColor
                         updatingColorSelectionOfArray(topColor, arrayOfTetraminxColours)
                     }
@@ -79,7 +88,7 @@ class ColorButtons(inputColor: MutableState<Color>){
                     .weight(1f)
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
                         currentButtonColorSelected.value = bottomColor
                         updatingColorSelectionOfArray(bottomColor, arrayOfTetraminxColours)
                     }
@@ -90,14 +99,14 @@ class ColorButtons(inputColor: MutableState<Color>){
     private fun updatingColorSelectionOfArray(
         selectedColor: Color,
         arrayOfTetraminxColours: Array<SnapshotStateList<Color>>
-    ){
+    ) {
 
         val oldColor = colourPairs[selectedColor]
 
-        for(side in arrayOfTetraminxColours.indices){
-            for( element in arrayOfTetraminxColours[side].indices){
-                if(arrayOfTetraminxColours[side][element] == oldColor){
-                     arrayOfTetraminxColours[side][element] = selectedColor
+        for (side in arrayOfTetraminxColours.indices) {
+            for (element in arrayOfTetraminxColours[side].indices) {
+                if (arrayOfTetraminxColours[side][element] == oldColor) {
+                    arrayOfTetraminxColours[side][element] = selectedColor
                 }
             }
         }

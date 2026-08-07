@@ -1,8 +1,7 @@
-package olegkov33.solver.logic.utils //This class generates a new node using an input as its starting point.
+package olegkov33.solver.logic.utils
 
 
 import olegkov33.solver.logic.main_app.Node
-import kotlin.math.floor
 
 class Scrambler {
     private val innerNode: Node
@@ -26,7 +25,7 @@ class Scrambler {
         stateList.add(result)
 
         for (i in 0..<turnsNumber) {
-            val randomNumber = floor(Math.random() * 8).toInt()
+            val randomNumber = (0..8).random()
 
             when (randomNumber) {
                 0 -> {
@@ -71,27 +70,7 @@ class Scrambler {
             }
         }
 
-        // used for display ONLY
-        for (state in stateList) {
-            showNode(state)
-        }
         return result
     }
 
-
-    // Shows the node in a ready to use state: Use int[][] nodeName = CTRL + V the code in console
-    private fun showNode(inputState: Array<IntArray>) {
-        var output = "{"
-        for (i in inputState.indices) {
-            output += "{"
-            for (j in inputState[0].indices) {
-                output += inputState[i][j].toString() + ","
-            }
-            output = output.substring(0, output.length - 1)
-            output += "},"
-        }
-        output = output.substring(0, output.length - 1)
-        output += "};"
-        println(output)
-    }
 } //Author OlegKov33

@@ -21,6 +21,8 @@ class CombinationOfButtonsAndModel {
      * @param currentScreen parameter used to change to solution screen
      * @param statusMessage parameter used as placeholder, which is shown in solution screen
      * @param nodeStates parameter used when mapping solution in solution screen
+     * @param innerArray invisible version of arrayOfTetraminxColours, not visible, logic that used for solving
+     * @param arrayOfTetraminxColours visible version of innerArray, used to show user what they selected
      */
     @Composable
     fun AddingModelAndButtons(
@@ -34,28 +36,28 @@ class CombinationOfButtonsAndModel {
         val model = ControllingModelWithButtons()
 
 
-        Row{
+        Row {
             Button(onClick = {
                 configureBeforeSolving(innerArray, statusMessage, nodeStates)
-                currentScreen.value = WindowState.Setup
-            }){
+                currentScreen.value = WindowState.Solving
+            }) {
                 Text(text = "Solve", color = Color.White)
             }
             Button(onClick = {
                 beginScrambling(statusMessage, nodeStates)
                 currentScreen.value = WindowState.Solving
-            }){
+            }) {
                 Text(text = "Scramble", color = Color.White)
             }
             Button(onClick = {
                 currentScreen.value = WindowState.Info
-            }){
+            }) {
                 Text(text = "?", color = Color.White)
             }
         }
 
 
-        model.generateButtonsAndTetraminx(innerArray, arrayOfTetraminxColours)
+        model.GenerateButtonsAndTetraminx(innerArray, arrayOfTetraminxColours)
 
     }
 
@@ -65,26 +67,26 @@ class CombinationOfButtonsAndModel {
         nodeStates: MutableList<Node>
     ) {
 
-        val workingArray = Array(4){
+        val workingArray = Array(4) {
             IntArray(6)
             IntArray(6)
             IntArray(6)
             IntArray(6)
         }
 
-        for(side in innerArray.indices){
-            for( cell in innerArray[side].indices){
+        for (side in innerArray.indices) {
+            for (cell in innerArray[side].indices) {
 
-                if(innerArray[side][cell] == Color.Red || innerArray[side][cell] == Color.LightGray){
+                if (innerArray[side][cell] == Color.Red || innerArray[side][cell] == Color.LightGray) {
                     workingArray[side][cell] = 0
                 }
-                if(innerArray[side][cell] == Color.Green || innerArray[side][cell] == Color.Magenta){
+                if (innerArray[side][cell] == Color.Green || innerArray[side][cell] == Color.Magenta) {
                     workingArray[side][cell] = 1
                 }
-                if (innerArray[side][cell] == Color.Blue || innerArray[side][cell] == Color.Cyan){
+                if (innerArray[side][cell] == Color.Blue || innerArray[side][cell] == Color.Cyan) {
                     workingArray[side][cell] = 2
                 }
-                if(innerArray[side][cell] == Color.Yellow || innerArray[side][cell] == Color.DarkGray){
+                if (innerArray[side][cell] == Color.Yellow || innerArray[side][cell] == Color.DarkGray) {
                     workingArray[side][cell] = 3
                 }
             }
@@ -93,9 +95,8 @@ class CombinationOfButtonsAndModel {
         beginSolving(
             workingArray,
             statusMessage,
-            nodeStates)
-
-
+            nodeStates
+        )
 
 
     }
@@ -103,7 +104,8 @@ class CombinationOfButtonsAndModel {
     private fun beginSolving(
         workingArray: Array<IntArray>,
         statusMessage: MutableState<String>,
-        nodeStates: MutableList<Node>) {
+        nodeStates: MutableList<Node>
+    ) {
 
         val startingNode = Node()
         startingNode.setName("start")
@@ -113,27 +115,28 @@ class CombinationOfButtonsAndModel {
         calculations.setStatusMessage(statusMessage)
         val result = calculations.start()
 
-        if( result != null){
+        if (result != null) {
 
-            nodeStates.addAll( result)
+            nodeStates.addAll(result)
         }
     }
+
     private fun beginScrambling(
         statusMessage: MutableState<String>,
         nodeStates: MutableList<Node>
-    ){
+    ) {
 
         val scrambler = Scrambler()
         val startingNode = Node()
         startingNode.setName("start")
 
-        startingNode.setGoalState(scrambler.scramble( ( 3 .. 10).random()) )
+        startingNode.setGoalState(scrambler.scramble((3..10).random()))
 
         val calculations = Calculations(startingNode)
         calculations.setStatusMessage(statusMessage)
         val result = calculations.scramblerStart()
 
-        if(result != null){
+        if (result != null) {
 
             nodeStates.addAll(result)
             statusMessage.value = "Follow the instructions to reach our scrambled state"

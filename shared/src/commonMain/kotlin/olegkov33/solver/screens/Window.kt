@@ -15,35 +15,73 @@ class Window {
      * Method used to combine the buttons + tetra-minx with solution window
      */
     @Composable
-    fun windowLogic(){
-        val currentScreen = remember{ mutableStateOf(WindowState.Info)}
-        val statusMessage = remember{ mutableStateOf("")}
-        val finalNodes : MutableList<Node> = remember { mutableListOf() }
-        val arrayOfTetraminxColours : Array<SnapshotStateList<Color>> =
-            remember { Array(4){ mutableStateListOf(*Array(6) { Color.Black }) }}
+    fun WindowLogic() {
+        val currentScreen = remember { mutableStateOf(WindowState.Info) }
+        val statusMessage = remember { mutableStateOf("") }
+        val finalNodes: MutableList<Node> = remember { mutableListOf() }
+        val arrayOfTetraminxColours: Array<SnapshotStateList<Color>> =
+            remember { Array(4) { mutableStateListOf(*Array(6) { Color.Black }) } }
 
-        val innerArray = remember{
+        val innerArray = remember {
             arrayOf(
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified),
-                arrayOf(Color.Unspecified,Color.Unspecified,Color.Unspecified ,Color.Unspecified,Color.Unspecified,Color.Unspecified)
+                arrayOf(
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                arrayOf(
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                arrayOf(
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                arrayOf(
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                )
             )
         }
 
-        if(currentScreen.value == WindowState.Setup){
-            CombinationOfButtonsAndModel()
-                .AddingModelAndButtons(currentScreen, statusMessage,
-                    finalNodes, innerArray,
-                    arrayOfTetraminxColours)
-        }else if(currentScreen.value == WindowState.Solving){
-            SolutionScreen().ButtonsMenu(currentScreen, statusMessage, finalNodes)
-        }else{
-            Guide().createGuideWindow(currentScreen)
+        when (currentScreen.value) {
+
+            WindowState.Setup -> {
+                CombinationOfButtonsAndModel()
+                    .AddingModelAndButtons(
+                        currentScreen, statusMessage,
+                        finalNodes, innerArray,
+                        arrayOfTetraminxColours
+                    )
+            }
+
+            WindowState.Solving -> {
+                SolutionScreen().ButtonsMenu(currentScreen, statusMessage, finalNodes)
+            }
+
+            WindowState.Info -> {
+                Guide().CreateGuideWindow(currentScreen)
+            }
         }
     }
 
 }
+
 enum class WindowState {
     Setup,
     Solving,
